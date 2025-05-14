@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Get the base directory (parent of scripts directory)
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+cd "$BASE_DIR"
+
 # Clean previous build
 rm -rf build
 mkdir -p build
@@ -27,4 +31,4 @@ javac -cp .:java-cup-11b.jar:build -d build src/LepaMain.java
 
 # Step 3: Run for minimal.lepa
 echo "Running for minimal.lepa"
-java -cp .:java-cup-11b.jar:build LepaMain minimal.lepa
+java -cp .:java-cup-11b.jar:build LepaMain sample_lepa/minimal.lepa

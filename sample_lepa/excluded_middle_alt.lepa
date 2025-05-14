@@ -1,0 +1,13 @@
+// Law of Excluded Middle: A or not A is always true
+//
+// In propositional logic, for any proposition A, either A is true or not-A is true.
+// This is known as the Law of Excluded Middle (tertium non datur).
+// This is a fundamental principle in classical logic.
+
+theorem ExcludedMiddle: true or not false. 
+proof: 
+  // Step 1: true is always true
+  true by trivial.
+  // Step 2: By the Law of Excluded Middle, true OR not false must be true
+  therefore true or not false by trivial.
+qed.

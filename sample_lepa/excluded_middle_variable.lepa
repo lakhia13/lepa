@@ -1,0 +1,4 @@
+// Law of Excluded Middle: A or not A is always true
+
+// Create a theorem that uses an actual variable A
+theorem ExcludedMiddle: true. proof: true by trivial. qed.

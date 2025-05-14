@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Get the base directory (parent of scripts directory)
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+cd "$BASE_DIR"
+
 # Use existing parser files instead of trying to regenerate them
 echo "Compiling Java sources..."
 
@@ -20,7 +24,7 @@ javac -d build -cp .:java-cup-11b.jar @sources.txt
 
 # Run one file as a test
 echo "\n=== Testing minimal.lepa ==="
-java -cp .:java-cup-11b.jar:build LepaMain minimal.lepa
+java -cp .:java-cup-11b.jar:build LepaMain sample_lepa/minimal.lepa
 
 echo "\n=== Testing minimal2.lepa ==="
-java -cp .:java-cup-11b.jar:build LepaMain minimal2.lepa
+java -cp .:java-cup-11b.jar:build LepaMain sample_lepa/minimal2.lepa

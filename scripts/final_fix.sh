@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Get the base directory (parent of scripts directory)
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+cd "$BASE_DIR"
+
 # Make backup of key files first
 cp -f src/parser/LepaLexer.java src/parser/LepaLexer.java.bak
 cp -f src/parser/LepaParser.java src/parser/LepaParser.java.bak
@@ -18,10 +22,10 @@ javac -cp .:java-cup-11b.jar:build -d build build/LepaMain.java
 
 # Test all files
 echo "\n=== Testing minimal.lepa ==="
-java -cp .:java-cup-11b.jar:build LepaMain minimal.lepa
+java -cp .:java-cup-11b.jar:build LepaMain sample_lepa/minimal.lepa
 
 echo "\n=== Testing minimal2.lepa ==="
-java -cp .:java-cup-11b.jar:build LepaMain minimal2.lepa
+java -cp .:java-cup-11b.jar:build LepaMain sample_lepa/minimal2.lepa
 
 # Summarize results
 echo "\n=== LEPA Compiler Fixes Complete ==="

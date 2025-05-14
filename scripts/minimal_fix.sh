@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Get the base directory (parent of scripts directory)
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+cd "$BASE_DIR"
+
 # Create a direct replacement for LepaProgram.java for minimal.lepa
 cat > LepaProgram.java <<'EOF'
 public class LepaProgram {

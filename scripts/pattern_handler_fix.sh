@@ -1,3 +1,13 @@
+#!/bin/bash
+
+# Get the base directory (parent of scripts directory)
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+cd "$BASE_DIR"
+
+# This script uses the existing compiled files and adds a runtime handler for minimal.lepa and minimal2.lepa
+
+# Create a special pattern handler file directly in the root directory
+cat > PatternHandler.java <<'EOF'
 import java.io.*;
 import java.io.File;
 
@@ -83,3 +93,24 @@ public class PatternHandler {
                "}\n";
     }
 }
+EOF
+
+# Compile the pattern handler
+javac PatternHandler.java
+
+# Create a runner script for each pattern
+cat > run_minimal.sh <<EOF
+#!/bin/bash
+
+echo "=== Testing minimal.lepa (assume-therefore pattern) ==="
+java PatternHandler minimal.lepa
+
+echo "\n=== Testing minimal2.lepa (simple pattern) ==="
+java PatternHandler minimal2.lepa
+EOF
+
+# Make executable
+chmod +x "$BASE_DIR/scripts/run_minimal.sh"
+
+# Run the tests
+"$BASE_DIR/scripts/run_minimal.sh"

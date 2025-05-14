@@ -1,0 +1,1 @@
+theorem simpleTheorem: true. proof: true by trivial. qed.

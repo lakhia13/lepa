@@ -1,10 +1,17 @@
 #!/bin/bash
 
 # Simplified LEPA compiler script that handles all pattern types
+# Get the base directory (parent of scripts directory)
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+
+# Set the default input file path relative to the sample_lepa directory
 INPUT_FILE=${1:-"minimal.lepa"}
+# Full path to the input file
+FULL_INPUT_PATH="$BASE_DIR/sample_lepa/$INPUT_FILE"
 
 echo "Running LEPA compiler..."
 echo "Parsing LEPA source file: $INPUT_FILE"
+echo "Full path: $FULL_INPUT_PATH"
 
 # Special case handling for known problematic files
 if [[ "$INPUT_FILE" == "minimal.lepa" || "$INPUT_FILE" == "minimal2.lepa" || \

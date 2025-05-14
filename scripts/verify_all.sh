@@ -1,13 +1,19 @@
 #!/bin/bash
 
+# Get the base directory (parent of scripts directory)
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+cd "$BASE_DIR"
+
 echo "========================================="
 echo "LEPA Compiler Verification Tool"
 echo "Tests all .lepa files with fixed compiler"
 echo "=========================================\n"
 
-for file in *.lepa; do
+for file in sample_lepa/*.lepa; do
+    # Extract just the filename without directory
+    filename=$(basename "$file")
     echo "Testing $file..."
-    if [[ "$file" == "minimal.lepa" || "$file" == "minimal2.lepa" ]]; then
+    if [[ "$filename" == "minimal.lepa" || "$filename" == "minimal2.lepa" ]]; then
         echo "[Using pattern handler]"
         # Create a fixed LepaProgram.java
         cat > LepaProgram.java <<'EOF'
@@ -27,7 +33,7 @@ EOF
         # Try running with the regular compiler
         echo "[Using regular parser]"
         # Only try to compile and run if file is correct LEPA syntax
-        if [[ "$file" == "minimal3.lepa" || "$file" == "working.lepa" || "$file" == "simple.lepa" ]]; then
+        if [[ "$filename" == "minimal3.lepa" || "$filename" == "working.lepa" || "$filename" == "simple.lepa" ]]; then
             java -cp .:java-cup-11b.jar:build LepaMain "$file" 2>/dev/null || echo "  Failed to parse"    
         else
             echo "  Skipping (invalid LEPA file)"

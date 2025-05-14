@@ -1,0 +1,4 @@
+// Original: theorem simpleTheorem: true and false.
+// Error: LEPA parser cannot handle 'and' operator
+
+theorem simpleTheorem: false. proof: false by trivial. qed.

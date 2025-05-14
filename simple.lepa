@@ -1,4 +1,1 @@
-theorem Simple: true.
-proof:
-  true.
-qed.
+theorem Simple: true. proof: true. QED.

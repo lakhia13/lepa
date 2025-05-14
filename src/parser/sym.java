@@ -8,7 +8,7 @@ package parser;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int FORALL = 13;
+  public static final int FORALL = 12;
   public static final int THEOREM = 2;
   public static final int PROOF = 3;
   public static final int THEREFORE = 19;
@@ -17,7 +17,7 @@ public class sym {
   public static final int RPAREN = 28;
   public static final int NOT = 22;
   public static final int AND = 20;
-  public static final int IN = 8;
+  public static final int IN = 14;
   public static final int OR = 21;
   public static final int COMMA = 31;
   public static final int QED = 4;
@@ -27,22 +27,22 @@ public class sym {
   public static final int BY = 17;
   public static final int TRUE = 15;
   public static final int error = 1;
-  public static final int EXISTS = 14;
+  public static final int EXISTS = 13;
   public static final int NUMBER = 35;
   public static final int NEQ = 26;
   public static final int EQ = 25;
   public static final int FROM = 18;
-  public static final int SUBSET = 10;
+  public static final int SUBSET = 9;
   public static final int COLON = 33;
-  public static final int UNION = 11;
+  public static final int UNION = 10;
   public static final int SETDIFF = 34;
-  public static final int NOTIN = 9;
+  public static final int NOTIN = 8;
   public static final int LBRACE = 29;
   public static final int LET = 7;
   public static final int RBRACE = 30;
   public static final int END = 6;
   public static final int FALSE = 16;
-  public static final int INTERSECT = 12;
+  public static final int INTERSECT = 11;
   public static final int IFF = 24;
   public static final int IDENTIFIER = 36;
   public static final String[] terminalNames = new String[] {
@@ -54,13 +54,13 @@ public class sym {
   "ASSUME",
   "END",
   "LET",
-  "IN",
   "NOTIN",
   "SUBSET",
   "UNION",
   "INTERSECT",
   "FORALL",
   "EXISTS",
+  "IN",
   "TRUE",
   "FALSE",
   "BY",

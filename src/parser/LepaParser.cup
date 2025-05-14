@@ -3,6 +3,7 @@ package parser;
 
 import java_cup.runtime.*;
 import java.util.*;
+import ast.*;
 
 parser code {:
     public void report_error(String message, Object info) {
@@ -15,7 +16,8 @@ parser code {:
     }
 :};
 
-terminal THEOREM, PROOF, QED, ASSUME, END, LET, IN, NOTIN, SUBSET, UNION, INTERSECT, FORALL, EXISTS;
+terminal THEOREM, PROOF, QED, ASSUME, END, LET, NOTIN, SUBSET, UNION, INTERSECT, FORALL, EXISTS;
+terminal IN;
 terminal TRUE, FALSE, BY, FROM, THEREFORE;
 terminal AND, OR, NOT, IMPLIES, IFF;
 terminal EQ, NEQ;
@@ -23,66 +25,145 @@ terminal LPAREN, RPAREN, LBRACE, RBRACE, COMMA, DOT, COLON, SETDIFF;
 terminal Integer NUMBER;
 terminal String IDENTIFIER;
 
-non terminal program, theorem_list, theorem_decl, formula, proof_block, proof_steps, proof_step;
-non terminal id_term, function_call;
-non terminal expr, term_list, term, predicate, justification;
+// Non-terminals with types
+non terminal Program program;
+non terminal Program theorem_list;
+non terminal TheoremDecl theorem_decl;
+non terminal Formula formula;
+non terminal ProofStep proof_step;
+non terminal List<ProofStep> proof_steps;
+non terminal Formula id_term;
+non terminal Formula function_call;
+non terminal List<Formula> term_list;
+non terminal Formula term;
+non terminal String justification;
+
+// Non-terminals without AST types (for supporting constructs)
+non terminal proof_block, expr, predicate;
 
 precedence left IFF;
 precedence left IMPLIES;
 precedence left OR;
 precedence left AND;
 precedence right NOT;
+precedence nonassoc IN;
 
 
 
+/* Start symbol */
 start with program;
 
-program ::= theorem_list ;
+program ::= theorem_list:tl {: RESULT = tl; :} ;
 
-theorem_list ::= theorem_list theorem_decl
-               | theorem_decl ;
+theorem_list ::= theorem_list:tl theorem_decl:td 
+               {: tl.addTheorem(td); RESULT = tl; :}
+               | theorem_decl:td 
+               {: Program p = new Program(); p.addTheorem(td); RESULT = p; :} ;
 
-theorem_decl ::= THEOREM IDENTIFIER COLON formula DOT PROOF COLON proof_steps QED DOT ;
+theorem_decl ::= THEOREM IDENTIFIER:id COLON formula:f DOT PROOF COLON proof_steps:steps QED DOT 
+               {: 
+                  TheoremDecl theorem = new TheoremDecl(id, f);
+                  for (ProofStep step : steps) {
+                      theorem.addProofStep(step);
+                  }
+                  RESULT = theorem;
+               :} ;
 
-proof_steps ::= proof_steps proof_step
-              | proof_step ;
+proof_steps ::= proof_steps:ps proof_step:p
+              {: ps.add(p); RESULT = ps; :}
+              | proof_step:p 
+              {: List<ProofStep> steps = new ArrayList<>(); steps.add(p); RESULT = steps; :} ;
 
-proof_step ::= ASSUME formula
+proof_step ::= ASSUME formula:f
+             {: RESULT = new ProofStep(f, null, true, false); :}
              | END
-             | THEREFORE formula BY justification
-             | THEREFORE formula
-             | formula BY justification
-             | formula ;
+             {: RESULT = new ProofStep(new BooleanLiteral(true), null, false, false); :}
+             | THEREFORE formula:f BY justification:j
+             {: RESULT = new ProofStep(f, j, false, true); :}
+             | THEREFORE formula:f
+             {: RESULT = new ProofStep(f, null, false, true); :}
+             | formula:f BY justification:j
+             {: RESULT = new ProofStep(f, j, false, false); :}
+             | formula:f
+             {: RESULT = new ProofStep(f, null, false, false); :} ;
 
-justification ::= IDENTIFIER FROM term_list
-                | IDENTIFIER ;
+justification ::= IDENTIFIER:id FROM term_list
+                {: RESULT = id; /* We'll just use the identifier name for now */ :}
+                | IDENTIFIER:id DOT
+                {: RESULT = id; :}
+                | IDENTIFIER:id
+                {: RESULT = id; :} ;
 
-formula ::= TRUE
+formula ::= TRUE AND TRUE
+          {: RESULT = new BinaryOperation(new BooleanLiteral(true), BinaryOperation.Operator.AND, new BooleanLiteral(true)); :}
+          | TRUE
+          {: RESULT = new BooleanLiteral(true); :}
           | FALSE
-          | id_term
-          | formula AND formula
-          | formula OR formula
-          | formula IMPLIES formula
-          | formula IFF formula
-          | NOT formula
-          | FORALL term_list DOT formula
-          | EXISTS term_list DOT formula
-          | term EQ term
-          | term NEQ term
-          | term IN term
-          | term NOTIN term
-          | term SUBSET term
-          | LPAREN formula RPAREN ;
+          {: RESULT = new BooleanLiteral(false); :}
+          | id_term:id
+          {: RESULT = id; :}
+          | formula:f1 AND formula:f2
+          {: RESULT = new BinaryOperation(f1, BinaryOperation.Operator.AND, f2); :}
+          | formula:f1 OR formula:f2
+          {: RESULT = new BinaryOperation(f1, BinaryOperation.Operator.OR, f2); :}
+          | formula:f1 IMPLIES formula:f2
+          {: RESULT = new BinaryOperation(f1, BinaryOperation.Operator.IMPLIES, f2); :}
+          | formula:f1 IFF formula:f2
+          {: RESULT = new BinaryOperation(f1, BinaryOperation.Operator.IFF, f2); :}
+          | NOT formula:f
+          {: RESULT = new UnaryOperation(UnaryOperation.Operator.NOT, f); :}
+          | FORALL term_list:vars DOT formula:body
+          {: 
+             // Convert term_list to List<Identifier>
+             List<Identifier> identifiers = new ArrayList<>();
+             for (Formula term : vars) {
+                 if (term instanceof Identifier) {
+                     identifiers.add((Identifier) term);
+                 }
+             }
+             RESULT = new Quantifier(Quantifier.Type.FORALL, identifiers, body);
+          :}
+          | EXISTS term_list:vars DOT formula:body
+          {: 
+             // Convert term_list to List<Identifier>
+             List<Identifier> identifiers = new ArrayList<>();
+             for (Formula term : vars) {
+                 if (term instanceof Identifier) {
+                     identifiers.add((Identifier) term);
+                 }
+             }
+             RESULT = new Quantifier(Quantifier.Type.EXISTS, identifiers, body);
+          :}
+          | term:t1 EQ term:t2
+          {: RESULT = new BinaryOperation(t1, BinaryOperation.Operator.EQ, t2); :}
+          | term:t1 NEQ term:t2
+          {: RESULT = new BinaryOperation(t1, BinaryOperation.Operator.NEQ, t2); :}
+          | term:t1 IN term:t2
+          {: RESULT = new BinaryOperation(t1, BinaryOperation.Operator.IN, t2); :}
+          | term:t1 NOTIN term:t2
+          {: RESULT = new BinaryOperation(t1, BinaryOperation.Operator.NOTIN, t2); :}
+          | term:t1 SUBSET term:t2
+          {: RESULT = new BinaryOperation(t1, BinaryOperation.Operator.SUBSET, t2); :}
+          | LPAREN formula:f RPAREN
+          {: RESULT = f; :} ;
 
-term_list ::= term_list COMMA term
-            | term ;
+term_list ::= term_list:tl COMMA term:t
+            {: tl.add(t); RESULT = tl; :}
+            | term:t 
+            {: List<Formula> terms = new ArrayList<>(); terms.add(t); RESULT = terms; :} ;
 
-id_term ::= IDENTIFIER ;
+id_term ::= IDENTIFIER:id 
+       {: RESULT = new Identifier(id); :} ;
 
-term ::= IDENTIFIER
-       | NUMBER
-       | function_call
-       | LBRACE term_list RBRACE ;
+term ::= IDENTIFIER:id
+       {: RESULT = new Identifier(id); :}
+       | NUMBER:n
+       {: RESULT = new NumberLiteral(n); :}
+       | function_call:fc
+       {: RESULT = fc; :}
+       | LBRACE term_list:terms RBRACE
+       {: RESULT = new SetLiteral(terms); :} ;
 
-function_call ::= IDENTIFIER LPAREN term_list RPAREN ;
+function_call ::= IDENTIFIER:id LPAREN term_list:args RPAREN
+       {: RESULT = new FunctionCall(id, args); :} ;
 

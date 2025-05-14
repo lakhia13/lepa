@@ -860,7 +860,7 @@ public class LepaLexer implements java_cup.runtime.Scanner {
             // fall through
           case 71: break;
           case 34: 
-            { System.out.println("ASSUME token found: " + yytext() + " at position " + yychar); return new Symbol(sym.ASSUME, yytext());
+            { System.out.println("ASSUME token found: " + yytext()); return new Symbol(sym.ASSUME, yytext());
             } 
             // fall through
           case 72: break;

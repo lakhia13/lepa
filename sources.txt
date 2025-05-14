@@ -12,9 +12,12 @@ src/ast/Quantifier.java
 src/ast/UnaryOperation.java
 src/ast/ProofStep.java
 src/ast/NumberLiteral.java
+src/LepaPatternHandler.java
 src/LexerTest.java
 src/runtime/LepaFunctions.java
 src/runtime/LepaRuntime.java
+src/TestLexer.java
 src/parser/LepaParser.java
 src/parser/LepaLexer.java
 src/parser/sym.java
+src/SimpleLexerTest.java

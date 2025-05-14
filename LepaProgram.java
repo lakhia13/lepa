@@ -12,7 +12,7 @@ public class LepaProgram {
 		// Declare variables for assumptions and intermediate results
 		boolean result = false;
 		// Proof step: BooleanLiteral[true]
-		boolean step_1725154839 = true;
+		boolean step_1670675563 = true;
 		result = true;
 		return result;
 	}

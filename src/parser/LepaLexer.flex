@@ -28,7 +28,7 @@ COMMENT = "//".*
 "proof"       { System.out.println("PROOF token found: " + yytext()); return new Symbol(sym.PROOF, yytext()); }
 "qed"         { System.out.println("QED token found: " + yytext()); return new Symbol(sym.QED, yytext()); }
 "QED"         { System.out.println("QED token found (uppercase): " + yytext()); return new Symbol(sym.QED, yytext()); }
-"assume"      { System.out.println("ASSUME token found: " + yytext()); return new Symbol(sym.ASSUME, yytext()); }
+"assume"      { System.out.println("ASSUME token found: " + yytext() + " at position " + yychar); return new Symbol(sym.ASSUME, yytext()); }
 "end"         { return new Symbol(sym.END, yytext()); }
 "let"         { return new Symbol(sym.LET, yytext()); }
 "in"          { return new Symbol(sym.IN, yytext()); }

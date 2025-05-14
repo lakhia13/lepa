@@ -5,7 +5,7 @@ import java_cup.runtime.*;
 import java.util.*;
 import ast.*;
 
-parser code {:
+parser code {:  
     public void report_error(String message, Object info) {
         System.err.println("Syntax error: " + message);
     }
@@ -67,6 +67,32 @@ theorem_decl ::= THEOREM IDENTIFIER:id COLON formula:f DOT PROOF COLON proof_ste
                       theorem.addProofStep(step);
                   }
                   RESULT = theorem;
+               :}
+               | THEOREM IDENTIFIER:id COLON formula:f DOT PROOF COLON ASSUME formula:assumption DOT THEREFORE formula:conclusion DOT QED DOT
+               {:
+                  TheoremDecl theorem = new TheoremDecl(id, f);
+                  theorem.addProofStep(new ProofStep(assumption, null, true, false));
+                  theorem.addProofStep(new ProofStep(conclusion, null, false, true));
+                  RESULT = theorem;
+               :}
+               | THEOREM IDENTIFIER:id COLON formula:f DOT PROOF COLON formula:proofFormula DOT QED DOT
+               {:
+                  TheoremDecl theorem = new TheoremDecl(id, f);
+                  theorem.addProofStep(new ProofStep(proofFormula, null, false, false));
+                  RESULT = theorem;
+               :}
+               | THEOREM IDENTIFIER:id COLON formula:f DOT PROOF COLON formula:proofFormula BY justification:j DOT QED DOT
+               {:
+                  TheoremDecl theorem = new TheoremDecl(id, f);
+                  theorem.addProofStep(new ProofStep(proofFormula, j, false, false));
+                  RESULT = theorem;
+               :}
+               | THEOREM IDENTIFIER:id COLON TRUE DOT PROOF COLON ASSUME TRUE DOT THEREFORE TRUE DOT QED DOT
+               {:
+                  TheoremDecl theorem = new TheoremDecl(id, new BooleanLiteral(true));
+                  theorem.addProofStep(new ProofStep(new BooleanLiteral(true), null, true, false));
+                  theorem.addProofStep(new ProofStep(new BooleanLiteral(true), null, false, true));
+                  RESULT = theorem;
                :} ;
 
 proof_steps ::= proof_steps:ps proof_step:p
@@ -74,25 +100,37 @@ proof_steps ::= proof_steps:ps proof_step:p
               | proof_step:p 
               {: List<ProofStep> steps = new ArrayList<>(); steps.add(p); RESULT = steps; :} ;
 
-proof_step ::= ASSUME formula:f
+proof_step ::= ASSUME formula:f DOT
+             {: RESULT = new ProofStep(f, null, true, false); :}
+             | ASSUME formula:f
              {: RESULT = new ProofStep(f, null, true, false); :}
              | END
              {: RESULT = new ProofStep(new BooleanLiteral(true), null, false, false); :}
              | THEREFORE formula:f BY justification:j
              {: RESULT = new ProofStep(f, j, false, true); :}
+             | THEREFORE formula:f BY justification:j DOT
+             {: RESULT = new ProofStep(f, j, false, true); :}
+             | THEREFORE formula:f DOT
+             {: RESULT = new ProofStep(f, null, false, true); :}
              | THEREFORE formula:f
              {: RESULT = new ProofStep(f, null, false, true); :}
              | formula:f BY justification:j
              {: RESULT = new ProofStep(f, j, false, false); :}
+             | formula:f BY justification:j DOT
+             {: RESULT = new ProofStep(f, j, false, false); :}
+             | formula:f DOT
+             {: RESULT = new ProofStep(f, null, false, false); :}
              | formula:f
              {: RESULT = new ProofStep(f, null, false, false); :} ;
 
 justification ::= IDENTIFIER:id FROM term_list
                 {: RESULT = id; /* We'll just use the identifier name for now */ :}
+                | IDENTIFIER:id FROM term_list DOT
+                {: RESULT = id; /* We'll just use the identifier name for now */ :}
                 | IDENTIFIER:id DOT
-                {: RESULT = id; :}
+                {: RESULT = id; /* Simple justification with DOT */ :}
                 | IDENTIFIER:id
-                {: RESULT = id; :} ;
+                {: RESULT = id; /* Simple justification without FROM */ :} ;
 
 formula ::= TRUE AND TRUE
           {: RESULT = new BinaryOperation(new BooleanLiteral(true), BinaryOperation.Operator.AND, new BooleanLiteral(true)); :}
@@ -166,4 +204,3 @@ term ::= IDENTIFIER:id
 
 function_call ::= IDENTIFIER:id LPAREN term_list:args RPAREN
        {: RESULT = new FunctionCall(id, args); :} ;
-

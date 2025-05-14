@@ -1,0 +1,6 @@
+// This is a simple LEPA theorem
+theorem simpleTheorem: true and true.
+proof:
+  true and true.
+  therefore true and true by trivial.
+qed.

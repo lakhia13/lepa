@@ -15,7 +15,11 @@ fi
 # Assumes that java-cup.jar is in the project root directory
 # Adjust the path to java-cup.jar as necessary
 echo "Generating Parser..."
-java -jar java-cup-11b.jar -parser LepaParser -symbols sym src/parser/LepaParser.cup
+java -jar java-cup-11b.jar -expect 2 -parser LepaParser -symbols sym src/parser/LepaParser.cup
+
+# Move the generated CUP files to the parser package directory
+mv -f LepaParser.java src/parser/
+mv -f sym.java src/parser/
 
 if [ $? -ne 0 ]; then
   echo "CUP parser generation failed."
@@ -38,6 +42,5 @@ fi
 # Step 4: Run the main class
 # Provide a sample LEPA source file (e.g., sample.lepa) as an argument
 # Ensure that the sample.lepa file exists in the project root or adjust the path accordingly
-echo "Running LEPA compiler..."
-java -cp .:java-cup-11b.jar lepa.LepaMain sample.lepa
-sss
+#echo "Running LEPA compiler..."
+#java -cp .:java-cup-11b.jar:src LepaMain sample.lepa

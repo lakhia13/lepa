@@ -1,0 +1,4 @@
+theorem Simple: true.
+proof:
+  true.
+qed.

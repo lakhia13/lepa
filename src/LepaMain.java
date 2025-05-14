@@ -1,14 +1,14 @@
-package lepa;
+// No package needed
 
 import java.io.*;
-import lepa.parser.LepaLexer;
-import lepa.parser.LepaParser;
+import parser.LepaLexer;
+import parser.LepaParser;
 import java_cup.runtime.Symbol;
 
 public class LepaMain {
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Usage: java lepa.LepaMain <source-file>");
+            System.out.println("Usage: java LepaMain <source-file>");
             return;
         }
         File file = new File(args[0]);

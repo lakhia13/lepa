@@ -1,9 +1,22 @@
-35 states before minimization, 31 states in minimized DFA
+Generating Lexer...
+Reading "src/parser/LepaLexer.flex"
+Constructing NFA : 172 states in NFA
+Converting NFA to DFA :
+...............................................................................................................
+113 states before minimization, 108 states in minimized DFA
 Old file "src/parser/LepaLexer.java" saved as "src/parser/LepaLexer.java~"
 Writing code to "src/parser/LepaLexer.java"
 Generating Parser...
-Error: Syntax error @ Symbol: EOF
+Error: Syntax error @ Symbol: COMMA (unknown:21/18(-1) - unknown:21/19(-1))
 instead expected token classes are []
-Fatal: Couldn't repair and continue parse
-Can't recover from previous error(s), giving up. @ Symbol: EOF
+Error : Illegal use of reserved word
+Error: Syntax error @ Symbol: START (unknown:24/7(-1) - unknown:24/12(-1))
+Error : Internal error: Unexpected exception
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "java.lang.Class.getFields()" because the return value of "java_cup.runtime.lr_parser.getSymbolContainer()" is null
+        at java_cup.runtime.lr_parser.symbl_name_from_id(lr_parser.java:456)
+        at java_cup.runtime.lr_parser.report_expected_token_ids(lr_parser.java:446)
+        at java_cup.runtime.lr_parser.syntax_error(lr_parser.java:433)
+        at java_cup.runtime.lr_parser.parse(lr_parser.java:725)
+        at java_cup.Main.parse_grammar_spec(Main.java:496)
+        at java_cup.Main.main(Main.java:196)
 CUP parser generation failed.

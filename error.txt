@@ -1,0 +1,9 @@
+35 states before minimization, 31 states in minimized DFA
+Old file "src/parser/LepaLexer.java" saved as "src/parser/LepaLexer.java~"
+Writing code to "src/parser/LepaLexer.java"
+Generating Parser...
+Error: Syntax error @ Symbol: EOF
+instead expected token classes are []
+Fatal: Couldn't repair and continue parse
+Can't recover from previous error(s), giving up. @ Symbol: EOF
+CUP parser generation failed.
